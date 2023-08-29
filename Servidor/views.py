@@ -1,6 +1,8 @@
 from utils import load_data, load_template, anota_json, build_response
 import urllib
+from database import Database, Note
 
+db = Database('banco')
 def index(request):
     # A string de request sempre começa com o tipo da requisição (ex: GET, POST)
     if request.startswith('POST'):
@@ -20,7 +22,9 @@ def index(request):
                 params["titulo"] = chave_valor[7:]
             if "detalhes" in chave_valor:
                 params["detalhes"] = chave_valor[9:]
-        anota_json(params)
+        #anota_json(params)
+        note_object = Note(title = params["titulo"], content = params["detalhes"])
+        db.add(note_object)
         return build_response(code=303, reason='See Other', headers='Location: /')
 
 
@@ -28,8 +32,8 @@ def index(request):
     # Se tiver curiosidade: https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions
     note_template = load_template('components/note.html')
     notes_li = [
-        note_template.format(title=dados['titulo'], details=dados['detalhes'])
-        for dados in load_data('notes.json')
+        note_template.format(title=note_object.title, details=note_object.content) 
+        for note_object in db.get_all()
     ]
     notes = '\n'.join(notes_li)
 
