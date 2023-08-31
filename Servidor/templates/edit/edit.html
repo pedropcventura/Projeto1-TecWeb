@@ -27,27 +27,24 @@
     </div>
 
     <main class="container">
-      <form class="form-card" method = "post">
+
+      <form class="form-card" method = "post" action="/update/{id}">
         <input
           class="form-card-title"
           type="text"
           name="titulo"
           placeholder="Título"
+          value="{title}"
         />
         <textarea
           class="autoresize"
           name="detalhes"
           placeholder="Digite o conteúdo..."
-        ></textarea>
-        <button class="btn" type="submit">Criar</button>
+        >{content}</textarea>
+        <button class="btn" type="submit">Salvar</button>
+        <button class="btn" type="button" onclick="location.href='/'">Cancelar</button>
       </form>
 
-      <ul class="card-container", id="sortable-list">
-        {notes}
-      </ul>
-    </main>
-
-    <script type="text/javascript" src="/templates/getit.js"></script>
-    <script type="text/javascript" src="/templates/eraseEdit.js"></script>
+    
   </body>
 </html>

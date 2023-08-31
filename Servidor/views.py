@@ -3,6 +3,49 @@ import urllib
 from database import Database, Note
 
 db = Database('banco')
+
+def editNote(noteID):
+    noteID = int(noteID)
+    for n in db.get_all():
+        if n.id == noteID:
+            note_object = n
+    body = load_template('edit/edit.html').format(id=note_object.id, title=note_object.title, content=note_object.content)
+    return build_response(body=body)
+
+def update(noteID, request):
+    noteID = int(noteID)
+
+    request = request.replace('\r', '')
+    partes = request.split('\n\n')
+    corpo = partes[1]
+    params = {}
+    for chave_valor in corpo.split('&'):
+        chave_valor = urllib.parse.unquote_plus(chave_valor)
+        if "titulo" in chave_valor:
+            params["titulo"] = chave_valor[7:]
+        if "detalhes" in chave_valor:
+            params["detalhes"] = chave_valor[9:]
+    note_object = Note(title = params["titulo"], content = params["detalhes"], id=noteID)
+    db.update(note_object)
+    note_template = load_template('components/note.html')
+    notes_li = [
+        note_template.format(title=note_object.title, details=note_object.content,id=note_object.id, id2=note_object.id) 
+        for note_object in db.get_all()
+    ]
+    notes = '\n'.join(notes_li)
+
+    body = load_template('index.html').format(notes=notes)
+    return build_response(body=body)
+
+    
+def deleteNote(noteID):
+    db.delete(noteID)
+    return build_response(code=204)
+
+def error404():
+    body = load_template('404/erro.html')
+    return build_response(body=body,code=404)
+
 def index(request):
     # A string de request sempre começa com o tipo da requisição (ex: GET, POST)
     if request.startswith('POST'):
@@ -32,7 +75,7 @@ def index(request):
     # Se tiver curiosidade: https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions
     note_template = load_template('components/note.html')
     notes_li = [
-        note_template.format(title=note_object.title, details=note_object.content) 
+        note_template.format(title=note_object.title, details=note_object.content,id=note_object.id, id2=note_object.id) 
         for note_object in db.get_all()
     ]
     notes = '\n'.join(notes_li)

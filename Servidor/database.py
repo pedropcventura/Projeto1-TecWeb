@@ -17,7 +17,8 @@ class Database:
                                                               content TEXT NOT NULL);""")
 
     def add(self, note_object: Note):
-        self.conn.execute(f"INSERT INTO note (title, content) VALUES ('{note_object.title}', '{note_object.content}');")
+        #self.conn.execute(f"INSERT INTO note (title, content) VALUES ('{note_object.title}', '{note_object.content}');")
+        self.conn.execute(f"INSERT INTO note (title, content) VALUES (?, ?);", (note_object.title, note_object.content))
         self.conn.commit()
     
     def get_all(self):
