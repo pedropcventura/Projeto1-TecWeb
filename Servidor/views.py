@@ -35,7 +35,7 @@ def update(noteID, request):
     notes = '\n'.join(notes_li)
 
     body = load_template('index.html').format(notes=notes)
-    return build_response(body=body)
+    return build_response(code=303, reason='See Other', headers='Location: /')
 
     
 def deleteNote(noteID):

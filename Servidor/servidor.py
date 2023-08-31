@@ -25,7 +25,7 @@ while True:
 
     print("ROUTE>>", route)
 
-
+    booleano = False
 
     filepath = CUR_DIR / route
     if filepath.is_file():
@@ -35,6 +35,7 @@ while True:
             response = build_response() + read_file(filepath)
     elif route == '':
         response = index(request)
+        booleano = False
     elif route.startswith("delete"):
         id = route.split("/")[-1]
         response = deleteNote(id)
@@ -46,6 +47,8 @@ while True:
     elif route.startswith("update"):
         id = route.split("/")[-1]
         response = update(id, request)
+        booleano = True
+
     else:
         response = error404()
 
